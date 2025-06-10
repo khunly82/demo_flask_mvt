@@ -1,0 +1,97 @@
+{% extends 'index.html' %}
+
+{% block title %} Administration des utilisateurs {% endblock %}
+
+{% block content %}
+
+<fieldset>
+	<legend>Partie 1 : Statistiques</legend>
+	{% set total = utilisateurs| length %}
+	{% set actifs = utilisateurs| selectattr('is_active') | list | length %}
+	{% set pourcentage = (actifs/ total * 100) | round(2) if total > 0 else 0 %}
+
+	<p>Utilisateurs enregistrés : <strong>{{total}}</strong></p>
+	<p>Actifs : <strong>{{actifs}}</strong> ({{pourcentage}}%)</p>
+</fieldset>
+
+<fieldset>
+	<legend>Partie 2 : Tableau complet</legend>
+	<table border="1">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Nom d'utilisateur</th>
+				<th>Email</th>
+				<th>Statut</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for user in utilisateurs %}
+			<tr>
+				<td>{{loop.index}}</td>
+				<td>{{user.username | upper}}</td>
+				<td>{{user.email}}</td>
+				<td>
+					{% if user.is_active %}
+						✅ Actifs
+					{% else %}
+						⛔ Inactif
+					{% endif %}
+				</td>
+				<td>
+					{% if user.is_active %}
+						<button>Désactiver</button>
+					{% else %}
+						<button>Activer</button>
+					{% endif %}
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</fieldset>
+
+<fieldset>
+	<legend>Partie 3 : Actifs / inactifs</legend>
+	<h2>✅ Utilisateurs actifs</h2>
+	<ul>
+		{% for user in utilisateurs %}
+			{% if user.is_active %}
+				<li> {{user.username}} {{user.email}}</li>
+			{% endif %}
+		{% endfor %}
+	</ul>
+
+	<h2>⛔ Utilisateurs inactifs</h2>
+	<ul>
+		{% for user in utilisateurs %}
+			{% if not user.is_active %}
+				<li> {{user.username}} {{user.email}}</li>
+			{% endif %}
+		{% endfor %}
+	</ul>
+</fieldset>
+
+<fieldset>
+	<legend>Partie 4 : Carte visuelles</legend>
+	<h2>Fiches utilisateurs</h2>
+	<div style="display: flex; flex-wrap : wrap; gap : 16px">
+		{% for user in utilisateurs %}
+		<div style="border: 1px solid black; padding : 12px; width : 220px">
+			<h3># {{user.id}} - {{user.username | title}}</h3>
+			<p><strong>Email :</strong> {{user.email}}</p>
+			<p>
+				<strong>Statut :</strong>
+				{% if user.is_active %}
+					<span style="color: chartreuse;">Actif</span>
+				{% else %}
+					<span style="color: red;">Inactifs</span>
+				{% endif %}
+			</p>
+			<button>Envoyer un mail</button>
+		</div>
+		{% endfor %}
+	</div>
+</fieldset>
+{% endblock %}

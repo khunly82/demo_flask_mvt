@@ -1,0 +1,103 @@
+{% extends "index.html" %}
+
+{% block title %}Espace cinéphile de {{ utilisateur|title }}{% endblock %}
+
+{% block content %}
+
+<h1>Bienvenue dans ton espace cinéphile, {{ utilisateur|title }} !</h1>
+
+{# === PARTIE 1 : PROFIL === #}
+{% set total = films|length %}
+{% set vus = films | selectattr("vu") | list | length %}
+{% set pourcentage = (vus / total * 100) | round(2) if total > 0 else 0 %}
+
+<fieldset>
+	<legend>Mon Profil</legend>
+	<p>Nombre total de films : <strong>{{ total }}</strong></p>
+	<p>Nombre de films vus : <strong>{{ vus }}</strong> ({{ pourcentage }}%)</p>
+	<p>
+		Profil :
+		{% if pourcentage >= 80 %}
+		Cinéphile averti
+		{% elif pourcentage >= 50 %}
+		Spectateur régulier
+		{% else %}
+		Explorateur occasionnel
+		{% endif %}
+	</p>
+</fieldset>
+
+<hr>
+
+{# === PARTIE 2 : BLOCS THÉMATIQUES === #}
+<h2>🎞️ Films à découvrir selon vos goûts</h2>
+
+<h3>Blockbusters</h3>
+{% for film in films %}
+{% if not film.vu and (film.genre in ['Action', 'Thriller', 'Science-fiction']) %}
+<div class="carte-film">
+	<h4>{{ film.titre|upper }}</h4>
+	<p>Genre : {{ film.genre }}</p>
+	<p>Durée : {{ film.duree }} min</p>
+	<p>Note : {{ film.note }}</p>
+	<button>Regarder maintenant</button>
+</div>
+{% endif %}
+{% endfor %}
+
+<h3>Films sensibles</h3>
+{% for film in films %}
+{% if not film.vu and (film.genre in ['Comédie musicale', 'Drame', 'Romance']) %}
+<div class="carte-film">
+	<h4>{{ film.titre|upper }}</h4>
+	<p>Genre : {{ film.genre }}</p>
+	<p>Durée : {{ film.duree }} min</p>
+	<p>Note : {{ film.note }}</p>
+	<button>Regarder maintenant</button>
+</div>
+{% endif %}
+{% endfor %}
+
+<h3>Autres films</h3>
+{% for film in films %}
+{% if not film.vu and (film.genre not in ['Action', 'Thriller', 'Science-fiction', 'Comédie musicale', 'Drame',
+'Romance']) %}
+<div class="carte-film">
+	<h4>{{ film.titre|upper }}</h4>
+	<p>Genre : {{ film.genre }}</p>
+	<p>Durée : {{ film.duree }} min</p>
+	<p>Note : {{ film.note }}</p>
+	<button>Regarder maintenant</button>
+</div>
+{% endif %}
+{% endfor %}
+
+<hr>
+
+{# === PARTIE 3 : RECOMMANDATION CIBLÉE === #}
+<h2>Notre recommandation</h2>
+
+{% set non_vus = films | selectattr("vu", "equalto", False) | list %}
+{% set top = non_vus | max(attribute="note") if non_vus else None %}
+
+{% if top %}
+<div class="recommandation" style="border:1px solid #ccc; padding:10px;">
+	<h3>{{ top.titre|title }}</h3>
+	<p><strong>Note :</strong> {{ top.note }}</p>
+	<p><strong>Genre :</strong> {{ top.genre }}</p>
+	<p><strong>Durée :</strong> {{ top.duree }} min</p>
+	<p>Ce chef-d'œuvre vous attend !</p>
+</div>
+{% else %}
+<p>Vous avez déjà vu tous les films du catalogue !</p>
+{% endif %}
+
+<hr>
+
+{# === PARTIE 4 : DURÉE TOTALE === #}
+<h2>Temps total passé au cinéma</h2>
+{% set total_duree = films | selectattr("vu") | map(attribute="duree") | sum %}
+<p>Durée totale des films vus : <strong>{{ total_duree }} minutes</strong></p>
+<p>Soit environ <strong>{{ (total_duree / 60) | round(1) }}</strong> heures de visionnage 🎥</p>
+
+{% endblock %}

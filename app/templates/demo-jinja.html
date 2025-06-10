@@ -1,0 +1,59 @@
+{% extends  "index.html" %}
+
+{% block title %} Démonstrations jinja : Jeux vidéo {% endblock %}
+
+{% block content %} 
+
+<h1>Bienvenue {{utilisateur|title}}</h1>
+
+{# Ce commentaire est invisible dans le HTML final #}
+
+{% if jeux|length >= 3 %}
+	<p>Vous avez une collection de {{jeux|length}} jeux enregistrés !</p>
+{% else %}
+	<p>Peu de jeux listés</p>
+{% endif %}
+
+<h2>tableau de jeux : </h2>
+<table border="1">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>Titre</th>
+			<th>Genre</th>
+			<th>Note</th>
+			<th>Prix</th>
+			<th>Statut</th>
+			<th>Catégorie</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for jeu in jeux %}
+		<tr>
+			<td>{{ loop.index }}</td>
+			<td>{{ jeu.titre | upper }}</td>
+			<td>{{ jeu.genre }}</td>
+			<td>{{ jeu.note }}</td>
+			<td>{{ jeu.prix | round(2) }}</td>
+			<td>{% if jeu.jouable %} ✅ Jouable {% else %} ⛔ Non jouable {% endif %}</td>
+			<td>
+				{% if jeu.note >= 18 and jeu.jouable %}
+					Recommandé
+				{% elif jeu.note < 15 %}
+					Á éviter
+				{% else %}
+					Moyen
+				{% endif %}
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+<h2>Genre représentés</h2>
+<ul>
+	{% set genres = jeux | map(attribute="genre") | unique | list %}
+	{% for genre in genres %}
+		<li>{{genre}}</li>
+	{% endfor %}
+</ul>
+{% endblock %}

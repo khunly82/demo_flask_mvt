@@ -1,0 +1,38 @@
+{% extends "index.html" %}
+
+{% block title %} Liste des tâches {% endblock %}
+
+{% block content %}
+
+<h1>Liste des tâches</h1>
+
+<a href="{{ url_for('create_Task') }}" class="btn btn-primary mb-3">➕ Ajouter une tâche</a>
+
+<table border="1" cellpadding="8">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>Description</th>
+			<th>Actions</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for task in tasks %}
+		<tr>
+			<td>{{ task.id }}</td>
+			<td>{{ task.description }}</td>
+			<td>
+				<a href="{{ url_for('update_task', id=task.id) }}" class="btn btn-warning btn-sm">✏️ Modifier</a>
+
+				<form method="post" action="{{ url_for('delete_task', id=task.id) }}" style="display:inline;"
+					onsubmit="return confirm('Supprimer cette tâche ?');">
+					<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+					<button type="submit" class="btn btn-danger btn-sm">🗑 Supprimer</button>
+				</form>
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "index.html" %}
+
+{% block title %} Accueil {% endblock %}
+
+
+{% block content %}
+
+<h1 class="text-center">Bienvenue sur ma page d'accueil</h1>
+<img src="{{url_for('static', filename='img/image-1.jpg')}}" alt="alt" height="150">
+
+{% endblock %}

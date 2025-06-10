@@ -1,0 +1,26 @@
+{% extends "index.html" %}
+
+{% block title %} Modification d'une tâche {% endblock %}
+
+{% block content %}
+
+<h1>Modifier la tâche #{{ task_id }}</h1>
+
+<form method="post">
+	{{ form.hidden_tag() }}
+
+	{% if form.description.errors %}
+	<ul class="text-danger">
+		{% for error in form.description.errors %}
+		<li>{{ error }}</li>
+		{% endfor %}
+	</ul>
+	{% endif %}
+
+	<p>{{ form.description.label }} {{ form.description() }}</p>
+
+	<button type="submit">Enregistrer</button>
+	<a href="{{ url_for('get_tasks') }}">Annuler</a>
+</form>
+
+{% endblock %}
